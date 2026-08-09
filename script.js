@@ -675,7 +675,6 @@ function renderGrid() {
 
 function renderList() {
 
-
     const container =
         document.getElementById(
             "listContainer"
@@ -689,8 +688,23 @@ function renderList() {
     container.innerHTML = "";
 
 
-    filteredUsers.forEach(user => {
+    if (!filteredUsers.length) {
 
+        container.innerHTML = `
+            <div class="empty">
+                <strong>
+                    No encontramos usuarios
+                </strong>
+                Prueba con otra búsqueda.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    filteredUsers.forEach((user, index) => {
 
         const item =
             document.createElement("div");
@@ -700,6 +714,9 @@ function renderList() {
             "list-item";
 
 
+        // ==================================
+        // AVATAR
+        // ==================================
 
         item.appendChild(
             createAvatar(
@@ -708,6 +725,9 @@ function renderList() {
         );
 
 
+        // ==================================
+        // INFORMACIÓN
+        // ==================================
 
         const info =
             document.createElement("div");
@@ -715,7 +735,6 @@ function renderList() {
 
         info.className =
             "list-item-info";
-
 
 
         const username =
@@ -726,7 +745,6 @@ function renderList() {
             "@" + user.username;
 
 
-
         const status =
             document.createElement("span");
 
@@ -735,24 +753,114 @@ function renderList() {
             "No te sigue de vuelta";
 
 
-
         info.appendChild(username);
-
         info.appendChild(status);
 
 
         item.appendChild(info);
 
 
-        container.appendChild(item);
+        // ==================================
+        // BOTÓN "VER PERFIL"
+        // ==================================
 
+        const viewProfileButton =
+            document.createElement("button");
+
+
+        viewProfileButton.className =
+            "list-profile-button";
+
+
+        viewProfileButton.type =
+            "button";
+
+
+        viewProfileButton.textContent =
+            "Ver perfil →";
+
+
+        viewProfileButton.addEventListener(
+            "click",
+            () => {
+
+                // Seleccionar exactamente
+                // este usuario
+                currentIndex = index;
+
+
+                // Cambiar a vista tarjeta
+                changeView("card");
+
+
+                // Renderizar el usuario seleccionado
+                renderCard();
+
+
+                // Llevar la pantalla
+                // hasta la tarjeta
+                document
+                    .getElementById(
+                        "cardContainer"
+                    )
+                    ?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+
+            }
+        );
+
+
+        item.appendChild(
+            viewProfileButton
+        );
+
+
+        // ==================================
+        // LINK A INSTAGRAM
+        // ==================================
+
+        if (user.href) {
+
+            const link =
+                document.createElement("a");
+
+
+            link.href =
+                user.href;
+
+
+            link.target =
+                "_blank";
+
+
+            link.rel =
+                "noopener noreferrer";
+
+
+            link.className =
+                "list-instagram-link";
+
+
+            link.textContent =
+                "↗";
+
+
+            link.title =
+                "Abrir perfil de Instagram";
+
+
+            item.appendChild(link);
+
+        }
+
+
+        container.appendChild(item);
 
     });
 
-
 }
-
-
 
 
 // ==========================================
