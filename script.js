@@ -1,3 +1,13 @@
+// ==========================================
+// FOLLOW CHECKER
+// SCRIPT COMPLETO
+// ==========================================
+
+
+// ==========================================
+// VARIABLES GLOBALES
+// ==========================================
+
 let notFollowingBack = [];
 let filteredUsers = [];
 
@@ -6,14 +16,29 @@ let currentView = "card";
 
 
 // ==========================================
+// PAGINACIÓN
+// ==========================================
+
+const USERS_PER_PAGE = 50;
+
+let currentPage = 1;
+
+
+// ==========================================
 // ELEMENTOS
 // ==========================================
 
-const file1 = document.getElementById("file1");
-const file2 = document.getElementById("file2");
+const file1 =
+    document.getElementById("file1");
 
-const selectFile1 = document.getElementById("selectFile1");
-const selectFile2 = document.getElementById("selectFile2");
+const file2 =
+    document.getElementById("file2");
+
+const selectFile1 =
+    document.getElementById("selectFile1");
+
+const selectFile2 =
+    document.getElementById("selectFile2");
 
 const compareButton =
     document.getElementById("compareButton");
@@ -31,56 +56,98 @@ const themeButton =
 
 if (selectFile1 && file1) {
 
-    selectFile1.addEventListener("click", () => {
-        file1.click();
-    });
+    selectFile1.addEventListener(
+        "click",
+        () => {
+            file1.click();
+        }
+    );
 
 }
 
 
 if (selectFile2 && file2) {
 
-    selectFile2.addEventListener("click", () => {
-        file2.click();
-    });
+    selectFile2.addEventListener(
+        "click",
+        () => {
+            file2.click();
+        }
+    );
 
 }
 
+
+// ==========================================
+// NOMBRE DEL ARCHIVO 1
+// ==========================================
 
 if (file1) {
 
-    file1.addEventListener("change", () => {
+    file1.addEventListener(
+        "change",
+        () => {
 
-        const fileName =
-            document.getElementById("fileName1");
+            const fileName =
+                document.getElementById(
+                    "fileName1"
+                );
 
-        if (fileName && file1.files.length) {
 
-            fileName.textContent =
-                file1.files[0].name;
+            if (
+                fileName &&
+                file1.files.length > 0
+            ) {
+
+                fileName.textContent =
+                    file1.files[0].name;
+
+            } else if (fileName) {
+
+                fileName.textContent =
+                    "Ningún archivo seleccionado";
+
+            }
 
         }
-
-    });
+    );
 
 }
 
 
+// ==========================================
+// NOMBRE DEL ARCHIVO 2
+// ==========================================
+
 if (file2) {
 
-    file2.addEventListener("change", () => {
+    file2.addEventListener(
+        "change",
+        () => {
 
-        const fileName =
-            document.getElementById("fileName2");
+            const fileName =
+                document.getElementById(
+                    "fileName2"
+                );
 
-        if (fileName && file2.files.length) {
 
-            fileName.textContent =
-                file2.files[0].name;
+            if (
+                fileName &&
+                file2.files.length > 0
+            ) {
+
+                fileName.textContent =
+                    file2.files[0].name;
+
+            } else if (fileName) {
+
+                fileName.textContent =
+                    "Ningún archivo seleccionado";
+
+            }
 
         }
-
-    });
+    );
 
 }
 
@@ -102,16 +169,19 @@ if (compareButton) {
 function compareJsonFiles() {
 
     const followingFile =
-        file1.files[0];
+        file1?.files?.[0];
 
     const followersFile =
-        file2.files[0];
+        file2?.files?.[0];
 
 
-    if (!followingFile || !followersFile) {
+    if (
+        !followingFile ||
+        !followersFile
+    ) {
 
         alert(
-            "Selecciona ambos archivos."
+            "Por favor, selecciona ambos archivos."
         );
 
         return;
@@ -119,93 +189,197 @@ function compareJsonFiles() {
     }
 
 
-    const reader1 = new FileReader();
-    const reader2 = new FileReader();
+    const readerFollowing =
+        new FileReader();
+
+    const readerFollowers =
+        new FileReader();
 
 
-    reader1.onload = e => {
+    // ======================================
+    // FOLLOWING
+    // ======================================
 
-        const followingJson =
-            JSON.parse(e.target.result);
+    readerFollowing.onload =
+        function (event) {
 
-
-        reader2.onload = e2 => {
-
-            const followersJson =
-                JSON.parse(e2.target.result);
+            let followingJson;
 
 
-            const following =
-                extractFollowing(followingJson);
+            try {
 
+                followingJson =
+                    JSON.parse(
+                        event.target.result
+                    );
 
-            const followers =
-                extractFollowers(followersJson);
+            } catch (error) {
 
-
-            const followersSet =
-                new Set(
-                    followers.map(
-                        u =>
-                        normalizeUsername(
-                            u.username
-                        )
-                    )
+                alert(
+                    "El archivo de seguidos no es un JSON válido."
                 );
 
+                return;
 
-            notFollowingBack =
-                following.filter(
-                    user =>
-                    !followersSet.has(
-                        normalizeUsername(
-                            user.username
-                        )
-                    )
-                );
+            }
 
 
-            filteredUsers =
-                [...notFollowingBack];
+            // ==================================
+            // FOLLOWERS
+            // ==================================
+
+            readerFollowers.onload =
+                function (event) {
+
+                    let followersJson;
 
 
-            currentIndex = 0;
+                    try {
+
+                        followersJson =
+                            JSON.parse(
+                                event.target.result
+                            );
+
+                    } catch (error) {
+
+                        alert(
+                            "El archivo de seguidores no es un JSON válido."
+                        );
+
+                        return;
+
+                    }
 
 
-            updateStats(
-                following.length,
-                followers.length,
-                notFollowingBack.length
+                    const following =
+                        extractFollowing(
+                            followingJson
+                        );
+
+
+                    const followers =
+                        extractFollowers(
+                            followersJson
+                        );
+
+
+                    if (
+                        !following.length ||
+                        !followers.length
+                    ) {
+
+                        alert(
+                            "No se encontraron datos válidos en uno o ambos archivos."
+                        );
+
+                        return;
+
+                    }
+
+
+                    // ==============================
+                    // FOLLOWERS SET
+                    // ==============================
+
+                    const followersSet =
+                        new Set(
+                            followers.map(
+                                user =>
+                                    normalizeUsername(
+                                        user.username
+                                    )
+                            )
+                        );
+
+
+                    // ==============================
+                    // NO TE SIGUEN
+                    // ==============================
+
+                    notFollowingBack =
+                        following.filter(
+                            user =>
+                                !followersSet.has(
+                                    normalizeUsername(
+                                        user.username
+                                    )
+                                )
+                        );
+
+
+                    filteredUsers =
+                        [
+                            ...notFollowingBack
+                        ];
+
+
+                    currentIndex = 0;
+
+                    currentPage = 1;
+
+
+                    // ==============================
+                    // ESTADÍSTICAS
+                    // ==============================
+
+                    updateStats(
+                        following.length,
+                        followers.length,
+                        notFollowingBack.length
+                    );
+
+
+                    // ==============================
+                    // MOSTRAR RESULTADOS
+                    // ==============================
+
+                    const results =
+                        document.getElementById(
+                            "results"
+                        );
+
+
+                    if (results) {
+
+                        results.style.display =
+                            "block";
+
+                    }
+
+
+                    render();
+
+
+                    if (results) {
+
+                        results.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+
+                    }
+
+                };
+
+
+            readerFollowers.readAsText(
+                followersFile
             );
-
-
-            document.getElementById(
-                "results"
-            ).style.display = "block";
-
-
-            render();
-
 
         };
 
 
-        reader2.readAsText(
-            followersFile
-        );
-
-    };
-
-
-    reader1.readAsText(
+    readerFollowing.readAsText(
         followingFile
     );
 
 }
-// ==========================================
-// EXTRAER USUARIOS
-// ==========================================
 
+
+// ==========================================
+// EXTRAER FOLLOWING
+// ==========================================
 
 function extractFollowing(json) {
 
@@ -213,22 +387,35 @@ function extractFollowing(json) {
 
 
     if (
+        json &&
         json.relationships_following &&
-        Array.isArray(json.relationships_following)
+        Array.isArray(
+            json.relationships_following
+        )
     ) {
 
         json.relationships_following.forEach(
             item => {
 
-                if (!item.title) return;
+                if (!item.title) {
+                    return;
+                }
+
+
+                const href =
+                    item
+                        .string_list_data
+                        ?. [0]
+                        ?. href || "";
 
 
                 users.push({
 
-                    username: item.title,
+                    username:
+                        item.title,
 
                     href:
-                        item.string_list_data?.[0]?.href || ""
+                        href
 
                 });
 
@@ -243,6 +430,9 @@ function extractFollowing(json) {
 }
 
 
+// ==========================================
+// EXTRAER FOLLOWERS
+// ==========================================
 
 function extractFollowers(json) {
 
@@ -253,25 +443,38 @@ function extractFollowers(json) {
 
         json.forEach(item => {
 
-            if (!item.string_list_data)
+            if (
+                !item.string_list_data ||
+                !Array.isArray(
+                    item.string_list_data
+                )
+            ) {
+
                 return;
 
-
-            item.string_list_data.forEach(sub => {
-
-                if (!sub.value)
-                    return;
+            }
 
 
-                users.push({
+            item.string_list_data.forEach(
+                sub => {
 
-                    username: sub.value,
+                    if (!sub.value) {
+                        return;
+                    }
 
-                    href: sub.href || ""
 
-                });
+                    users.push({
 
-            });
+                        username:
+                            sub.value,
+
+                        href:
+                            sub.href || ""
+
+                    });
+
+                }
+            );
 
         });
 
@@ -283,16 +486,15 @@ function extractFollowers(json) {
 }
 
 
-
-
 // ==========================================
 // NORMALIZAR USERNAME
 // ==========================================
 
+function normalizeUsername(
+    username
+) {
 
-function normalizeUsername(username) {
-
-    return username
+    return String(username)
         .trim()
         .toLowerCase()
         .replace(/^@/, "");
@@ -300,12 +502,9 @@ function normalizeUsername(username) {
 }
 
 
-
-
 // ==========================================
 // ESTADÍSTICAS
 // ==========================================
-
 
 function updateStats(
     following,
@@ -313,24 +512,20 @@ function updateStats(
     notFollowing
 ) {
 
-
     const followingCount =
         document.getElementById(
             "followingCount"
         );
-
 
     const followersCount =
         document.getElementById(
             "followersCount"
         );
 
-
     const notFollowingCount =
         document.getElementById(
             "notFollowingCount"
         );
-
 
     const description =
         document.getElementById(
@@ -338,16 +533,28 @@ function updateStats(
         );
 
 
-    if (followingCount)
-        followingCount.textContent = following;
+    if (followingCount) {
+
+        followingCount.textContent =
+            following;
+
+    }
 
 
-    if (followersCount)
-        followersCount.textContent = followers;
+    if (followersCount) {
+
+        followersCount.textContent =
+            followers;
+
+    }
 
 
-    if (notFollowingCount)
-        notFollowingCount.textContent = notFollowing;
+    if (notFollowingCount) {
+
+        notFollowingCount.textContent =
+            notFollowing;
+
+    }
 
 
     if (description) {
@@ -364,39 +571,54 @@ function updateStats(
 }
 
 
-
-
 // ==========================================
-// AVATAR
+// INICIALES
 // ==========================================
-
 
 function getInitials(username) {
 
-
     const clean =
-        username
-        .replace(/^@/, "")
-        .trim();
+        String(username)
+            .replace(/^@/, "")
+            .trim();
 
 
-    if (!clean)
+    if (!clean) {
         return "?";
+    }
+
+
+    const parts =
+        clean
+            .split(/[._-]/)
+            .filter(Boolean);
+
+
+    if (parts.length >= 2) {
+
+        return (
+            parts[0][0] +
+            parts[1][0]
+        ).toUpperCase();
+
+    }
 
 
     return clean
-        .slice(0,2)
+        .slice(0, 2)
         .toUpperCase();
 
 }
 
 
+// ==========================================
+// CREAR AVATAR
+// ==========================================
 
 function createAvatar(
     username,
     large = false
 ) {
-
 
     const avatar =
         document.createElement("div");
@@ -404,12 +626,53 @@ function createAvatar(
 
     avatar.className =
         large
-        ? "avatar-large"
-        : "avatar";
+            ? "avatar-large"
+            : "avatar";
 
 
+    // Iniciales primero como fallback
     avatar.textContent =
         getInitials(username);
+
+
+    // ==============================
+    // FOTO DE PERFIL
+    // ==============================
+
+    const img =
+        document.createElement("img");
+
+
+    img.src =
+        `https://unavatar.io/instagram/${encodeURIComponent(username)}`;
+
+
+    img.alt =
+        `Foto de perfil de ${username}`;
+
+
+    img.loading =
+        "lazy";
+
+
+    img.onload =
+        function () {
+
+            avatar.textContent = "";
+
+            avatar.appendChild(img);
+
+        };
+
+
+    img.onerror =
+        function () {
+
+            // Se mantienen las iniciales
+            avatar.textContent =
+                getInitials(username);
+
+        };
 
 
     return avatar;
@@ -417,15 +680,11 @@ function createAvatar(
 }
 
 
-
-
 // ==========================================
 // RENDER GENERAL
 // ==========================================
 
-
 function render() {
-
 
     renderCard();
 
@@ -433,13 +692,16 @@ function render() {
 
     renderList();
 
+    renderPagination();
+
     updateViewVisibility();
 
 }
+
+
 // ==========================================
 // VISTA TARJETA
 // ==========================================
-
 
 function renderCard() {
 
@@ -449,8 +711,9 @@ function renderCard() {
         );
 
 
-    if (!container)
+    if (!container) {
         return;
+    }
 
 
     container.innerHTML = "";
@@ -463,6 +726,7 @@ function renderCard() {
                 <strong>
                     No encontramos usuarios
                 </strong>
+
                 Prueba con otra búsqueda.
             </div>
         `;
@@ -473,11 +737,19 @@ function renderCard() {
 
 
     if (
-        currentIndex >= filteredUsers.length
+        currentIndex >=
+        filteredUsers.length
     ) {
 
         currentIndex =
             filteredUsers.length - 1;
+
+    }
+
+
+    if (currentIndex < 0) {
+
+        currentIndex = 0;
 
     }
 
@@ -494,6 +766,10 @@ function renderCard() {
         "profile-card";
 
 
+    // ==============================
+    // AVATAR
+    // ==============================
+
     card.appendChild(
         createAvatar(
             user.username,
@@ -501,6 +777,10 @@ function renderCard() {
         )
     );
 
+
+    // ==============================
+    // USERNAME
+    // ==============================
 
     const username =
         document.createElement("div");
@@ -517,6 +797,9 @@ function renderCard() {
     card.appendChild(username);
 
 
+    // ==============================
+    // STATUS
+    // ==============================
 
     const status =
         document.createElement("div");
@@ -533,6 +816,9 @@ function renderCard() {
     card.appendChild(status);
 
 
+    // ==============================
+    // CONTADOR
+    // ==============================
 
     const counter =
         document.createElement("div");
@@ -549,9 +835,11 @@ function renderCard() {
     card.appendChild(counter);
 
 
+    // ==============================
+    // LINK INSTAGRAM
+    // ==============================
 
     if (user.href) {
-
 
         const link =
             document.createElement("a");
@@ -582,21 +870,16 @@ function renderCard() {
     }
 
 
-
     container.appendChild(card);
 
 }
-
-
 
 
 // ==========================================
 // VISTA GRID
 // ==========================================
 
-
 function renderGrid() {
-
 
     const container =
         document.getElementById(
@@ -604,85 +887,9 @@ function renderGrid() {
         );
 
 
-    if (!container)
+    if (!container) {
         return;
-
-
-    container.innerHTML = "";
-
-
-    filteredUsers.forEach(user => {
-
-
-        const card =
-            document.createElement("div");
-
-
-        card.className =
-            "user-card";
-
-
-
-        const avatar =
-            createAvatar(
-                user.username
-            );
-
-
-        card.appendChild(avatar);
-
-
-
-        const name =
-            document.createElement("strong");
-
-
-        name.textContent =
-            "@" + user.username;
-
-
-        card.appendChild(name);
-
-
-
-        const status =
-            document.createElement("span");
-
-
-        status.textContent =
-            "No te sigue";
-
-
-        card.appendChild(status);
-
-
-
-        container.appendChild(card);
-
-
-    });
-
-
-}
-
-
-
-
-// ==========================================
-// VISTA LISTA
-// ==========================================
-
-
-function renderList() {
-
-    const container =
-        document.getElementById(
-            "listContainer"
-        );
-
-
-    if (!container)
-        return;
+    }
 
 
     container.innerHTML = "";
@@ -695,6 +902,7 @@ function renderList() {
                 <strong>
                     No encontramos usuarios
                 </strong>
+
                 Prueba con otra búsqueda.
             </div>
         `;
@@ -704,161 +912,682 @@ function renderList() {
     }
 
 
-    filteredUsers.forEach((user, index) => {
+    filteredUsers.forEach(
+        user => {
 
-        const item =
-            document.createElement("div");
+            const card =
+                document.createElement(
+                    "div"
+                );
 
 
-        item.className =
-            "list-item";
+            card.className =
+                "user-card";
 
 
-        // ==================================
-        // AVATAR
-        // ==================================
+            // ==========================
+            // TOP
+            // ==========================
 
-        item.appendChild(
-            createAvatar(
-                user.username
-            )
+            const top =
+                document.createElement(
+                    "div"
+                );
+
+
+            top.className =
+                "user-card-top";
+
+
+            top.appendChild(
+                createAvatar(
+                    user.username
+                )
+            );
+
+
+            // ==========================
+            // INFO
+            // ==========================
+
+            const info =
+                document.createElement(
+                    "div"
+                );
+
+
+            info.className =
+                "user-info";
+
+
+            const username =
+                document.createElement(
+                    "strong"
+                );
+
+
+            username.textContent =
+                "@" + user.username;
+
+
+            const status =
+                document.createElement(
+                    "span"
+                );
+
+
+            status.textContent =
+                "No te sigue";
+
+
+            info.appendChild(
+                username
+            );
+
+            info.appendChild(
+                status
+            );
+
+
+            top.appendChild(
+                info
+            );
+
+
+            card.appendChild(
+                top
+            );
+
+
+            // ==========================
+            // INSTAGRAM
+            // ==========================
+
+            if (user.href) {
+
+                const link =
+                    document.createElement(
+                        "a"
+                    );
+
+
+                link.href =
+                    user.href;
+
+
+                link.target =
+                    "_blank";
+
+
+                link.rel =
+                    "noopener noreferrer";
+
+
+                link.textContent =
+                    "Ver perfil ↗";
+
+
+                card.appendChild(
+                    link
+                );
+
+            }
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// VISTA LISTA
+// ==========================================
+
+function renderList() {
+
+    const container =
+        document.getElementById(
+            "listContainer"
         );
 
 
-        // ==================================
-        // INFORMACIÓN
-        // ==================================
-
-        const info =
-            document.createElement("div");
+    if (!container) {
+        return;
+    }
 
 
-        info.className =
-            "list-item-info";
+    container.innerHTML = "";
 
 
-        const username =
-            document.createElement("strong");
+    if (!filteredUsers.length) {
+
+        container.innerHTML = `
+            <div class="empty">
+                <strong>
+                    No encontramos usuarios
+                </strong>
+
+                Prueba con otra búsqueda.
+            </div>
+        `;
+
+        return;
+
+    }
 
 
-        username.textContent =
-            "@" + user.username;
+    // ======================================
+    // CALCULAR USUARIOS DE ESTA PÁGINA
+    // ======================================
+
+    const start =
+        (currentPage - 1) *
+        USERS_PER_PAGE;
 
 
-        const status =
-            document.createElement("span");
+    const end =
+        start +
+        USERS_PER_PAGE;
 
 
-        status.textContent =
-            "No te sigue de vuelta";
+    const pageUsers =
+        filteredUsers.slice(
+            start,
+            end
+        );
 
 
-        info.appendChild(username);
-        info.appendChild(status);
+    pageUsers.forEach(
+        (user, pageIndex) => {
+
+            // Índice REAL dentro de filteredUsers
+            const realIndex =
+                start + pageIndex;
 
 
-        item.appendChild(info);
+            const item =
+                document.createElement(
+                    "div"
+                );
 
 
-        // ==================================
-        // BOTÓN "VER PERFIL"
-        // ==================================
-
-        const viewProfileButton =
-            document.createElement("button");
+            item.className =
+                "list-item";
 
 
-        viewProfileButton.className =
-            "list-profile-button";
+            // ==================================
+            // AVATAR
+            // ==================================
+
+            item.appendChild(
+                createAvatar(
+                    user.username
+                )
+            );
 
 
-        viewProfileButton.type =
+            // ==================================
+            // INFORMACIÓN
+            // ==================================
+
+            const info =
+                document.createElement(
+                    "div"
+                );
+
+
+            info.className =
+                "list-item-info";
+
+
+            const username =
+                document.createElement(
+                    "strong"
+                );
+
+
+            username.textContent =
+                "@" + user.username;
+
+
+            const status =
+                document.createElement(
+                    "span"
+                );
+
+
+            status.textContent =
+                "No te sigue de vuelta";
+
+
+            info.appendChild(
+                username
+            );
+
+
+            info.appendChild(
+                status
+            );
+
+
+            item.appendChild(
+                info
+            );
+
+
+            // ==================================
+            // BOTÓN VER PERFIL
+            // ==================================
+
+            const viewButton =
+                document.createElement(
+                    "button"
+                );
+
+
+            viewButton.type =
+                "button";
+
+
+            viewButton.className =
+                "list-profile-button";
+
+
+            viewButton.textContent =
+                "Ver perfil →";
+
+
+            viewButton.title =
+                "Abrir este usuario en vista de perfil";
+
+
+            viewButton.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+
+                    // Seleccionar usuario REAL
+                    currentIndex =
+                        realIndex;
+
+
+                    // Cambiar a tarjeta
+                    changeView(
+                        "card"
+                    );
+
+
+                    // Mostrar exactamente
+                    // este usuario
+                    renderCard();
+
+
+                    // Llevar pantalla
+                    // hasta la tarjeta
+                    document
+                        .getElementById(
+                            "cardContainer"
+                        )
+                        ?.scrollIntoView({
+                            behavior:
+                                "smooth",
+
+                            block:
+                                "center"
+                        });
+
+                }
+            );
+
+
+            item.appendChild(
+                viewButton
+            );
+
+
+            // ==================================
+            // LINK INSTAGRAM
+            // ==================================
+
+            if (user.href) {
+
+                const link =
+                    document.createElement(
+                        "a"
+                    );
+
+
+                link.href =
+                    user.href;
+
+
+                link.target =
+                    "_blank";
+
+
+                link.rel =
+                    "noopener noreferrer";
+
+
+                link.className =
+                    "list-instagram-link";
+
+
+                link.textContent =
+                    "↗";
+
+
+                link.title =
+                    "Abrir Instagram";
+
+
+                link.addEventListener(
+                    "click",
+                    event => {
+
+                        event.stopPropagation();
+
+                    }
+                );
+
+
+                item.appendChild(
+                    link
+                );
+
+            }
+
+
+            container.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// PAGINACIÓN
+// ==========================================
+
+function renderPagination() {
+
+    const container =
+        document.getElementById(
+            "listContainer"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    // Eliminar paginación anterior
+    const oldPagination =
+        document.getElementById(
+            "pagination"
+        );
+
+
+    if (oldPagination) {
+
+        oldPagination.remove();
+
+    }
+
+
+    const totalPages =
+        Math.ceil(
+            filteredUsers.length /
+            USERS_PER_PAGE
+        );
+
+
+    // Si solo hay una página,
+    // no mostramos controles
+    if (totalPages <= 1) {
+
+        return;
+
+    }
+
+
+    const pagination =
+        document.createElement(
+            "div"
+        );
+
+
+    pagination.id =
+        "pagination";
+
+
+    pagination.className =
+        "pagination";
+
+
+    // ==================================
+    // BOTÓN ANTERIOR
+    // ==================================
+
+    const previous =
+        document.createElement(
+            "button"
+        );
+
+
+    previous.type =
+        "button";
+
+
+    previous.className =
+        "pagination-button";
+
+
+    previous.textContent =
+        "←";
+
+
+    previous.disabled =
+        currentPage === 1;
+
+
+    previous.addEventListener(
+        "click",
+        () => {
+
+            if (
+                currentPage <= 1
+            ) {
+                return;
+            }
+
+
+            currentPage--;
+
+
+            render();
+
+
+            document
+                .getElementById(
+                    "listContainer"
+                )
+                ?.scrollIntoView({
+                    behavior:
+                        "smooth",
+
+                    block:
+                        "start"
+                });
+
+        }
+    );
+
+
+    pagination.appendChild(
+        previous
+    );
+
+
+    // ==================================
+    // NÚMEROS DE PÁGINA
+    // ==================================
+
+    for (
+        let page = 1;
+        page <= totalPages;
+        page++
+    ) {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
             "button";
 
 
-        viewProfileButton.textContent =
-            "Ver perfil →";
+        button.className =
+            "pagination-button";
 
 
-        viewProfileButton.addEventListener(
+        button.textContent =
+            page;
+
+
+        if (
+            page === currentPage
+        ) {
+
+            button.classList.add(
+                "active"
+            );
+
+        }
+
+
+        button.addEventListener(
             "click",
             () => {
 
-                // Seleccionar exactamente
-                // este usuario
-                currentIndex = index;
+                currentPage =
+                    page;
 
 
-                // Cambiar a vista tarjeta
-                changeView("card");
+                render();
 
 
-                // Renderizar el usuario seleccionado
-                renderCard();
-
-
-                // Llevar la pantalla
-                // hasta la tarjeta
                 document
                     .getElementById(
-                        "cardContainer"
+                        "listContainer"
                     )
                     ?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center"
+                        behavior:
+                            "smooth",
+
+                        block:
+                            "start"
                     });
 
             }
         );
 
 
-        item.appendChild(
-            viewProfileButton
+        pagination.appendChild(
+            button
+        );
+
+    }
+
+
+    // ==================================
+    // BOTÓN SIGUIENTE
+    // ==================================
+
+    const next =
+        document.createElement(
+            "button"
         );
 
 
-        // ==================================
-        // LINK A INSTAGRAM
-        // ==================================
-
-        if (user.href) {
-
-            const link =
-                document.createElement("a");
+    next.type =
+        "button";
 
 
-            link.href =
-                user.href;
+    next.className =
+        "pagination-button";
 
 
-            link.target =
-                "_blank";
+    next.textContent =
+        "→";
 
 
-            link.rel =
-                "noopener noreferrer";
+    next.disabled =
+        currentPage === totalPages;
 
 
-            link.className =
-                "list-instagram-link";
+    next.addEventListener(
+        "click",
+        () => {
+
+            if (
+                currentPage >=
+                totalPages
+            ) {
+
+                return;
+
+            }
 
 
-            link.textContent =
-                "↗";
+            currentPage++;
 
 
-            link.title =
-                "Abrir perfil de Instagram";
+            render();
 
 
-            item.appendChild(link);
+            document
+                .getElementById(
+                    "listContainer"
+                )
+                ?.scrollIntoView({
+                    behavior:
+                        "smooth",
+
+                    block:
+                        "start"
+                });
 
         }
+    );
 
 
-        container.appendChild(item);
+    pagination.appendChild(
+        next
+    );
 
-    });
+
+    // ==================================
+    // INSERTAR DESPUÉS DE LA LISTA
+    // ==================================
+
+    container.parentNode.insertBefore(
+        pagination,
+        container.nextSibling
+    );
 
 }
 
@@ -867,57 +1596,62 @@ function renderList() {
 // CAMBIAR VISTA
 // ==========================================
 
-
 document
-.querySelectorAll(".view-button")
-.forEach(button => {
+    .querySelectorAll(
+        ".view-button"
+    )
+    .forEach(
+        button => {
 
+            button.addEventListener(
+                "click",
+                () => {
 
-    button.addEventListener(
-        "click",
-        () => {
+                    changeView(
+                        button.dataset.view
+                    );
 
-            changeView(
-                button.dataset.view
+                }
             );
 
         }
     );
 
 
-});
-
-
-
 function changeView(view) {
-
 
     currentView =
         view;
 
 
-
     document
-    .querySelectorAll(".view-button")
-    .forEach(button => {
+        .querySelectorAll(
+            ".view-button"
+        )
+        .forEach(
+            button => {
 
-        button.classList.remove(
-            "active"
+                button.classList.remove(
+                    "active"
+                );
+
+            }
         );
 
-    });
 
-
-
-    const active =
+    const activeButton =
         document.querySelector(
             `[data-view="${view}"]`
         );
 
 
-    if (active)
-        active.classList.add("active");
+    if (activeButton) {
 
+        activeButton.classList.add(
+            "active"
+        );
+
+    }
 
 
     updateViewVisibility();
@@ -925,21 +1659,21 @@ function changeView(view) {
 }
 
 
+// ==========================================
+// VISIBILIDAD DE VISTAS
+// ==========================================
 
 function updateViewVisibility() {
-
 
     const card =
         document.getElementById(
             "cardContainer"
         );
 
-
     const grid =
         document.getElementById(
             "gridContainer"
         );
-
 
     const list =
         document.getElementById(
@@ -947,44 +1681,51 @@ function updateViewVisibility() {
         );
 
 
-    if (card)
+    if (card) {
+
         card.style.display =
             currentView === "card"
-            ? "flex"
-            : "none";
+                ? "flex"
+                : "none";
+
+    }
 
 
-    if (grid)
+    if (grid) {
+
         grid.style.display =
             currentView === "grid"
-            ? "grid"
-            : "none";
+                ? "grid"
+                : "none";
+
+    }
 
 
-    if (list)
+    if (list) {
+
         list.style.display =
             currentView === "list"
-            ? "flex"
-            : "none";
+                ? "flex"
+                : "none";
+
+    }
 
 }
+
 
 // ==========================================
 // NAVEGACIÓN TARJETA
 // ==========================================
-
 
 const previousButton =
     document.getElementById(
         "previousButton"
     );
 
-
 const nextButton =
     document.getElementById(
         "nextButton"
     );
-
 
 
 if (previousButton) {
@@ -997,7 +1738,6 @@ if (previousButton) {
 }
 
 
-
 if (nextButton) {
 
     nextButton.addEventListener(
@@ -1008,12 +1748,11 @@ if (nextButton) {
 }
 
 
-
 function previousUser() {
 
-
-    if (!filteredUsers.length)
+    if (!filteredUsers.length) {
         return;
+    }
 
 
     currentIndex--;
@@ -1032,12 +1771,11 @@ function previousUser() {
 }
 
 
-
 function nextUser() {
 
-
-    if (!filteredUsers.length)
+    if (!filteredUsers.length) {
         return;
+    }
 
 
     currentIndex++;
@@ -1058,49 +1796,44 @@ function nextUser() {
 }
 
 
-
-
 // ==========================================
 // BUSCADOR
 // ==========================================
 
-
 if (searchInput) {
-
 
     searchInput.addEventListener(
         "input",
         searchUsers
     );
 
-
 }
-
 
 
 function searchUsers() {
 
-
     const query =
         searchInput
-        .value
-        .trim()
-        .toLowerCase()
-        .replace(/^@/, "");
-
+            .value
+            .trim()
+            .toLowerCase()
+            .replace(/^@/, "");
 
 
     filteredUsers =
         notFollowingBack.filter(
             user =>
-            user.username
-            .toLowerCase()
-            .includes(query)
+                normalizeUsername(
+                    user.username
+                ).includes(
+                    query
+                )
         );
 
 
-
     currentIndex = 0;
+
+    currentPage = 1;
 
 
     render();
@@ -1108,22 +1841,15 @@ function searchUsers() {
 }
 
 
-
-
-
 // ==========================================
 // MODO OSCURO
 // ==========================================
 
-
-
 function toggleTheme() {
-
 
     document.body.classList.toggle(
         "dark"
     );
-
 
 
     const isDark =
@@ -1132,51 +1858,39 @@ function toggleTheme() {
         );
 
 
-
     if (themeButton) {
-
 
         themeButton.textContent =
             isDark
-            ? "☀"
-            : "☾";
-
+                ? "☀"
+                : "☾";
 
     }
-
 
 
     localStorage.setItem(
         "followCheckerTheme",
         isDark
-        ? "dark"
-        : "light"
+            ? "dark"
+            : "light"
     );
-
 
 }
 
 
-
-
 if (themeButton) {
-
 
     themeButton.addEventListener(
         "click",
         toggleTheme
     );
 
-
 }
-
-
 
 
 // ==========================================
 // CARGAR TEMA GUARDADO
 // ==========================================
-
 
 const savedTheme =
     localStorage.getItem(
@@ -1184,40 +1898,30 @@ const savedTheme =
     );
 
 
-
 if (savedTheme === "dark") {
-
 
     document.body.classList.add(
         "dark"
     );
 
 
-
     if (themeButton) {
-
 
         themeButton.textContent =
             "☀";
 
-
     }
 
-
 }
-
-
 
 
 // ==========================================
 // FLECHAS DEL TECLADO
 // ==========================================
 
-
 document.addEventListener(
     "keydown",
     event => {
-
 
         if (
             currentView !== "card" ||
@@ -1229,9 +1933,21 @@ document.addEventListener(
         }
 
 
+        // No cambiar de usuario mientras
+        // se está escribiendo en el buscador
+        if (
+            document.activeElement ===
+            searchInput
+        ) {
+
+            return;
+
+        }
+
 
         if (
-            event.key === "ArrowLeft"
+            event.key ===
+            "ArrowLeft"
         ) {
 
             previousUser();
@@ -1239,15 +1955,14 @@ document.addEventListener(
         }
 
 
-
         if (
-            event.key === "ArrowRight"
+            event.key ===
+            "ArrowRight"
         ) {
 
             nextUser();
 
         }
-
 
     }
 );
