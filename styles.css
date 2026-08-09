@@ -1,4 +1,4 @@
-* {
+ {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -1318,6 +1318,281 @@ RESPONSIVE
         width: 105px;
 
         height: 105px;
+
+    }
+
+}
+/* ==========================================
+   BOTÓN VER PERFIL
+========================================== */
+
+.list-profile-button {
+
+    flex-shrink: 0;
+
+    padding: 8px 12px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 10px;
+
+    background: var(--surface);
+
+    color: var(--text);
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+.list-profile-button:hover {
+
+    background: var(--accent);
+
+    color: var(--accent-text);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+.list-profile-button:active {
+
+    transform:
+        scale(0.97);
+
+}
+
+
+/* ==========================================
+   LINK INSTAGRAM
+========================================== */
+
+.list-instagram-link {
+
+    flex-shrink: 0;
+
+    color: var(--muted);
+
+    text-decoration: none;
+
+    font-size: 17px;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+.list-instagram-link:hover {
+
+    color: var(--text);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+/* ==========================================
+   PAGINACIÓN
+========================================== */
+
+.pagination {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-top: 20px;
+
+    padding: 8px;
+
+}
+
+
+.pagination-button {
+
+    min-width: 34px;
+
+    height: 34px;
+
+    padding: 0 9px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 10px;
+
+    background: var(--surface);
+
+    color: var(--text);
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+.pagination-button:hover:not(:disabled) {
+
+    background:
+        var(--surface-hover);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+.pagination-button.active {
+
+    background:
+        var(--accent);
+
+    color:
+        var(--accent-text);
+
+    border-color:
+        var(--accent);
+
+}
+
+
+.pagination-button:disabled {
+
+    opacity: 0.35;
+
+    cursor:
+        not-allowed;
+
+}
+
+
+/* ==========================================
+   FOTOS DE PERFIL
+========================================== */
+
+.avatar img,
+.avatar-large img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    display: block;
+
+}
+
+
+/* ==========================================
+   LISTA
+========================================== */
+
+.list-item {
+
+    cursor: default;
+
+}
+
+
+.list-item-info {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+/* ==========================================
+   MÓVIL
+========================================== */
+
+@media (max-width: 650px) {
+
+    .list-profile-button {
+
+        padding:
+            7px 9px;
+
+        font-size:
+            9px;
+
+    }
+
+
+    .pagination {
+
+        flex-wrap: wrap;
+
+    }
+
+}
+
+
+@media (max-width: 430px) {
+
+    .list-profile-button {
+
+        font-size:
+            0;
+
+        width:
+            32px;
+
+        height:
+            32px;
+
+        padding:
+            0;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
+    }
+
+
+    .list-profile-button::after {
+
+        content:
+            "→";
+
+        font-size:
+            13px;
 
     }
 
