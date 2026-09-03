@@ -157,6 +157,7 @@ function compareJsonFiles() {
     }
 
 
+    
     const readerFollowing =
         new FileReader();
 
