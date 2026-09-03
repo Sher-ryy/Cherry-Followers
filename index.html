@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Follow Checker</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="brand">
+            <div class="brand-icon">↗</div>
+
+            <div>
+                <h1>Follow Checker</h1>
+                <p>Instagram relationship analyzer</p>
+            </div>
+        </div>
+
+        <button class="theme-button" id="themeButton">
+            ☾
+        </button>
+    </header>
+
+
+    <main>
+
+        <section class="hero">
+            <p class="eyebrow">INSTAGRAM ANALYZER</p>
+
+            <h2>
+                ¿Quién no te sigue
+                <span>de vuelta?</span>
+            </h2>
+
+            <p class="hero-description">
+                Compara tus seguidores y seguidos para descubrir
+                quiénes no están siguiendo tu cuenta de regreso.
+            </p>
+        </section>
+
+        <section class="upload-section">
+
+            <div class="upload-card">
+
+                <div class="upload-icon">
+                    ↑
+                </div>
+
+                <div>
+                    <h3>Personas que sigues</h3>
+
+                    <p>
+                        Selecciona tu archivo
+                        <strong>following.json</strong>.
+                    </p>
+                </div>
+
+                <button
+                    class="file-button"
+                    id="selectFile1"
+                    type="button"
+                >
+                    Seleccionar archivo
+                </button>
+
+                <input
+                    type="file"
+                    id="file1"
+                    accept=".json"
+                    hidden
+                >
+
+                <span
+                    class="file-name"
+                    id="fileName1"
+                >
+                    Ningún archivo seleccionado
+                </span>
+
+            </div>
+
+
+            <div class="upload-card">
+
+                <div class="upload-icon">
+                    ↓
+                </div>
+
+                <div>
+                    <h3>Tus seguidores</h3>
+
+                    <p>
+                        Selecciona tu archivo
+                        <strong>followers_1.json</strong>.
+                    </p>
+                </div>
+
+                <button
+                    class="file-button"
+                    id="selectFile2"
+                    type="button"
+                >
+                    Seleccionar archivo
+                </button>
+
+                <input
+                    type="file"
+                    id="file2"
+                    accept=".json"
+                    hidden
+                >
+
+                <span
+                    class="file-name"
+                    id="fileName2"
+                >
+                    Ningún archivo seleccionado
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <button
+            class="compare-button"
+            id="compareButton"
+            type="button"
+        >
+            Comparar mis cuentas
+            <span>→</span>
+        </button>
+
+        <section
+            class="results"
+            id="results"
+        >
+
+            <div class="result-header">
+
+                <div>
+                    <p class="eyebrow">RESULTADOS</p>
+
+                    <h2>
+                        No te siguen de vuelta
+                    </h2>
+
+                    <p
+                        class="result-description"
+                        id="resultDescription"
+                    >
+                        Estas personas no aparecen entre tus seguidores.
+                    </p>
+                </div>
+
+
+                <div class="stats">
+
+                    <div class="stat">
+                        <strong id="followingCount">0</strong>
+                        <span>seguidos</span>
+                    </div>
+
+                    <div class="stat">
+                        <strong id="followersCount">0</strong>
+                        <span>seguidores</span>
+                    </div>
+
+                    <div class="stat accent-stat">
+                        <strong id="notFollowingCount">0</strong>
+                        <span>no te siguen</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="toolbar">
+
+                <div class="search">
+
+                    <span>⌕</span>
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Buscar usuario..."
+                    >
+
+                </div>
+
+
+                <div class="view-buttons">
+
+                    <button
+                        class="view-button active"
+                        id="cardButton"
+                        data-view="card"
+                        title="Vista tarjeta"
+                    >
+                        ▣
+                    </button>
+
+                    <button
+                        class="view-button"
+                        id="gridButton"
+                        data-view="grid"
+                        title="Vista cuadrícula"
+                    >
+                        ▦
+                    </button>
+
+                    <button
+                        class="view-button"
+                        id="listButton"
+                        data-view="list"
+                        title="Vista lista"
+                    >
+                        ☰
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                class="card-view"
+                id="cardContainer"
+            >
+
+                <button
+                    class="nav-button"
+                    id="previousButton"
+                    aria-label="Usuario anterior"
+                >
+                    ←
+                </button>
+
+
+                <div id="profileCard"></div>
+
+
+                <button
+                    class="nav-button"
+                    id="nextButton"
+                    aria-label="Usuario siguiente"
+                >
+                    →
+                </button>
+
+            </div>
+
+
+            <div
+                class="grid-view"
+                id="gridContainer"
+            ></div>
+
+
+            <div
+                class="list-view"
+                id="listContainer"
+            ></div>
+
+        </section>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
