@@ -31,10 +31,6 @@ const themeButton =
     document.getElementById("themeButton");
 
 
-// ==========================================
-// SELECCIONAR ARCHIVOS
-// ==========================================
-
 if (selectFile1 && file1) {
 
     selectFile1.addEventListener(
@@ -157,7 +153,7 @@ function compareJsonFiles() {
     }
 
 
-    
+
     const readerFollowing =
         new FileReader();
 
